@@ -45,8 +45,40 @@ http {
     include             /etc/nginx/mime.types;
     default_type        application/octet-stream;
 
-    # insert here nfs location for conf files
     include /etc/nginx/conf.d/*.conf;
+    
+    index   index.html index.htm;
+
+    server {
+        listen       80 default_server;
+        listen       [::]:80 default_server;
+        server_name  localhost;
+        root         /var/www/html;
+
+        include /etc/nginx/default.d/*.conf;
+
+        location / {
+            root     /var/www/html;
+            index    index.php index.htm index.html;
+            # try_files \$uri \$uri/ /index.php?\$args;
+        }
+
+        location ~ \.php$ {
+            fastcgi_pass    unix:/var/run/php-fpm/php-fpm.sock;
+            fastcgi_index   index.php;
+            fastcgi_param   SCRIPT_FILENAME  /var/www/html\$fastcgi_script_name;
+            include         fastcgi_params;
+        }
+
+        error_page 404 /404.html;
+            location = /40x.html {
+        }
+
+        error_page 500 502 503 504 /50x.html;
+            location = /50x.html {
+        }
+
+    }    
 
 }
 EOF
