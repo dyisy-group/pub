@@ -89,8 +89,4 @@ sudo yum update -y
 # enable nginx to write files
 sudo setenforce 0
 
-# notify we finished init
-#curl ...
-
-
 
